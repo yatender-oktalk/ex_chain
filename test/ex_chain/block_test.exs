@@ -4,7 +4,7 @@ defmodule ExChain.BlockTest do
   """
 
   use ExUnit.Case
-  alias ExChain.Block
+  alias ExChain.BlockChain.Block
 
   describe "block" do
     test "genesis is valid" do

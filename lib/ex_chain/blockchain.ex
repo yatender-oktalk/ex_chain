@@ -13,13 +13,17 @@ defmodule ExChain.BlockChain do
 
   @spec new :: BlockChain.t()
   def new() do
-    %__MODULE__{chain: [Block.genesis()]}
+    %__MODULE__{}
+    |> add_genesis()
   end
 
-  @spec add_block(any()) :: [Block.t({})]
-  def add_block(data) do
+  def add_block(chain = %__MODULE__{}, data) do
     # Here we need to think how can we preserve state
     # I think by gen_server :D
     [Block.mine_block(Block.genesis(), data)]
+  end
+
+  defp add_genesis(chain = %__MODULE__{}) do
+    %{chain | chain: [Block.genesis()]}
   end
 end

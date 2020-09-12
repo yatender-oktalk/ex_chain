@@ -16,8 +16,11 @@ defmodule ExChain.BlockChain.Block do
 
   @spec new(pos_integer(), String.t(), any()) :: Block.t()
   def new(timestamp, last_hash, data) do
-    hash = hash(timestamp, last_hash, data)
-    %__MODULE__{timestamp: timestamp, last_hash: last_hash, hash: hash, data: data}
+    %__MODULE__{}
+    |> add_timestamp(timestamp)
+    |> add_last_hash(last_hash)
+    |> add_data(data)
+    |> add_hash()
   end
 
   @spec get_str(Block.t()) :: String.t()
@@ -41,6 +44,15 @@ defmodule ExChain.BlockChain.Block do
   end
 
   # private functions
+  defp add_timestamp(%Block{} = block, timestamp), do: %{block | timestamp: timestamp}
+  defp add_data(%Block{} = block, data), do: %{block | data: data}
+
+  defp add_last_hash(%Block{} = block, last_hash), do: %{block | last_hash: last_hash}
+
+  defp add_hash(%Block{timestamp: timestamp, last_hash: last_hash, data: data} = block) do
+    %{block | hash: hash(timestamp, last_hash, data)}
+  end
+
   defp get_timestamp(), do: DateTime.utc_now() |> DateTime.to_unix(1_000_000)
 
   defp hash(timestamp, last_hash, data) do

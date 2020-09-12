@@ -17,13 +17,15 @@ defmodule ExChain.BlockChain do
     |> add_genesis()
   end
 
-  def add_block(chain = %__MODULE__{}, data) do
+  def add_block(blockchain = %__MODULE__{chain: chain}, data) do
     # Here we need to think how can we preserve state
     # I think by gen_server :D
-    [Block.mine_block(Block.genesis(), data)]
+    {last_block, _} = List.pop_at(chain, -1)
+
+    %{blockchain | chain: chain ++ [Block.mine_block(last_block, data)]}
   end
 
-  defp add_genesis(chain = %__MODULE__{}) do
-    %{chain | chain: [Block.genesis()]}
+  defp add_genesis(blockchain = %__MODULE__{}) do
+    %{blockchain | chain: [Block.genesis()]}
   end
 end

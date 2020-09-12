@@ -44,12 +44,13 @@ defmodule ExChain.BlockChain.Block do
   end
 
   # private functions
-  defp add_timestamp(%Block{} = block, timestamp), do: %{block | timestamp: timestamp}
-  defp add_data(%Block{} = block, data), do: %{block | data: data}
+  defp add_timestamp(%__MODULE__{} = block, timestamp), do: %{block | timestamp: timestamp}
 
-  defp add_last_hash(%Block{} = block, last_hash), do: %{block | last_hash: last_hash}
+  defp add_data(%__MODULE__{} = block, data), do: %{block | data: data}
 
-  defp add_hash(%Block{timestamp: timestamp, last_hash: last_hash, data: data} = block) do
+  defp add_last_hash(%__MODULE__{} = block, last_hash), do: %{block | last_hash: last_hash}
+
+  defp add_hash(%__MODULE__{timestamp: timestamp, last_hash: last_hash, data: data} = block) do
     %{block | hash: hash(timestamp, last_hash, data)}
   end
 

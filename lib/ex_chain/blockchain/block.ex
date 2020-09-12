@@ -31,6 +31,7 @@ defmodule ExChain.BlockChain.Block do
     """
   end
 
+  @spec genesis() :: Block.t()
   def genesis() do
     __MODULE__.new(1_599_909_623_805_627, "-", "genesis data")
   end

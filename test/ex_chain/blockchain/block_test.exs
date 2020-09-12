@@ -1,4 +1,4 @@
-defmodule ExChain.BlockTest do
+defmodule ExChain.Blockchain.BlockTest do
   @moduledoc """
   This module contains test related to a block
   """
@@ -23,6 +23,17 @@ defmodule ExChain.BlockTest do
                data: "this is mined data",
                last_hash: ^hash
              } = Block.mine_block(genesis_block, "this is mined data")
+    end
+
+    test "new give a new block when we pass the parameters" do
+      # setup the data
+      timestamp = DateTime.utc_now() |> DateTime.to_unix(1_000_000)
+      last_hash = "random_hash"
+      data = "this is new block data"
+
+      # Perform assertions
+      assert %Block{timestamp: ^timestamp, hash: _hash, last_hash: ^last_hash, data: ^data} =
+               Block.new(timestamp, last_hash, data)
     end
   end
 end

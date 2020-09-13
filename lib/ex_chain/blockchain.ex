@@ -17,9 +17,8 @@ defmodule ExChain.BlockChain do
     |> add_genesis()
   end
 
+  @spec add_block(BlockChain.t(), any) :: BlockChain.t()
   def add_block(blockchain = %__MODULE__{chain: chain}, data) do
-    # Here we need to think how can we preserve state
-    # I think by gen_server :D
     {last_block, _} = List.pop_at(chain, -1)
 
     %{blockchain | chain: chain ++ [Block.mine_block(last_block, data)]}

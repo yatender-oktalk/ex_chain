@@ -1,17 +1,17 @@
-defmodule ExChain.BlockChain do
+defmodule ExChain.Blockchain do
   @moduledoc """
   This module contains the blockchain related functions
   """
   alias __MODULE__
-  alias ExChain.BlockChain.Block
+  alias ExChain.Blockchain.Block
 
   defstruct ~w(chain)a
 
-  @type t :: %BlockChain{
+  @type t :: %Blockchain{
           chain: [Block.t({})]
         }
 
-  @spec new :: BlockChain.t()
+  @spec new :: Blockchain.t()
   def new() do
     %__MODULE__{}
     |> add_genesis()

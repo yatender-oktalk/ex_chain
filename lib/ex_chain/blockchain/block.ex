@@ -1,4 +1,4 @@
-defmodule ExChain.BlockChain.Block do
+defmodule ExChain.Blockchain.Block do
   @moduledoc """
   This module is the single block struct in a blockchain
   """

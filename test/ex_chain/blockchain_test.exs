@@ -31,7 +31,7 @@ defmodule ExChain.BlockchainTest do
       # add block into blockchain
       blockchain = Blockchain.add_block(blockchain, "some-block-data")
       # assert if blockchain is valid
-      assert Blockchain.valid?(blockchain)
+      assert Blockchain.valid_chain?(blockchain)
     end
 
     test "when we temper data in existing chain", %{
@@ -44,14 +44,36 @@ defmodule ExChain.BlockchainTest do
         |> Blockchain.add_block("blockchain-data-block-3")
 
       # validate if blockchain is valid
-      assert Blockchain.valid?(blockchain)
+      assert Blockchain.valid_chain?(blockchain)
       # temper the blockchain, assume at location 2
       index = 2
       tempered_block = put_in(Enum.at(blockchain.chain, index).data, "tempered_data")
-      blockchain = List.update_at(blockchain.chain, index, tempered_data)
+
+      blockchain = %Blockchain{chain: List.replace_at(blockchain.chain, index, tempered_block)}
 
       # should invalidate the blockchain
-      refute Blockchain.valid?(blockchain)
+      refute Blockchain.valid_chain?(blockchain)
+    end
+
+    test "when we temper hash in existing chain", %{
+      blockchain: blockchain
+    } do
+      blockchain =
+        blockchain
+        |> Blockchain.add_block("blockchain-data-block-1")
+        |> Blockchain.add_block("blockchain-data-block-2")
+        |> Blockchain.add_block("blockchain-data-block-3")
+
+      # validate if blockchain is valid
+      assert Blockchain.valid_chain?(blockchain)
+      # temper the blockchain, assume at location 2
+      index = 2
+      tempered_block = put_in(Enum.at(blockchain.chain, index).hash, "tempered_hash")
+
+      blockchain = %Blockchain{chain: List.replace_at(blockchain.chain, index, tempered_block)}
+
+      # should invalidate the blockchain
+      refute Blockchain.valid_chain?(blockchain)
     end
   end
 

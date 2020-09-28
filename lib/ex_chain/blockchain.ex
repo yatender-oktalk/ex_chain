@@ -24,6 +24,7 @@ defmodule ExChain.Blockchain do
     %{blockchain | chain: chain ++ [Block.mine_block(last_block, data)]}
   end
 
+  @spec valid_chain?(ExChain.Blockchain.t()) :: boolean
   def valid_chain?(%__MODULE__{} = blockchain) do
     blockchain.chain
     |> List.delete_at(0)

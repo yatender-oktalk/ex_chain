@@ -77,5 +77,40 @@ defmodule ExChain.BlockchainTest do
     end
   end
 
+  describe "Multiple chains" do
+    setup [:setup_chains]
+
+    test "longest chain wins", %{blockchain: chain_1, longer_blockchain: chain_2} do
+      assert chain_2 ==
+               Blockchain.replace_chain_if_longer(chain_1, chain_2)
+    end
+
+    test "longest chain wins when we send short chain", %{
+      blockchain: chain_1,
+      longer_blockchain: chain_2
+    } do
+      assert chain_2 = Blockchain.replace_chain_if_longer(chain_2, chain_1)
+    end
+  end
+
   defp initialize_blockchain(context), do: Map.put(context, :blockchain, Blockchain.new())
+
+  defp setup_chains(context) do
+    blockchain =
+      Blockchain.new()
+      |> Blockchain.add_block("first-block")
+      |> Blockchain.add_block("second-block")
+      |> Blockchain.add_block("third-block")
+
+    longer_blockchain =
+      Blockchain.new()
+      |> Blockchain.add_block("first-block")
+      |> Blockchain.add_block("second-block")
+      |> Blockchain.add_block("third-block")
+      |> Blockchain.add_block("fourth-block")
+
+    context
+    |> Map.put(:blockchain, blockchain)
+    |> Map.put(:longer_blockchain, longer_blockchain)
+  end
 end

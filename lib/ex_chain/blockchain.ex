@@ -5,6 +5,8 @@ defmodule ExChain.Blockchain do
   alias __MODULE__
   alias ExChain.Blockchain.Block
 
+  require Logger
+
   defstruct ~w(chain)a
 
   @type t :: %Blockchain{
@@ -36,6 +38,23 @@ defmodule ExChain.Blockchain do
         valid_block_hash?(current_block)
     end)
     |> Enum.all?(&(&1 == true))
+  end
+
+  @spec replace_chain_if_longer(ExChain.Blockchain.t(), ExChain.Blockchain.t()) ::
+          ExChain.Blockchain.t()
+  def replace_chain_if_longer(
+        %Blockchain{chain: chain} = _blockchain,
+        %Blockchain{chain: received_chain} = _received_blockchain
+      ) do
+    case length(received_chain) < length(chain) do
+      true ->
+        Logger.debug("Received chain is not longer than the current chain")
+        %Blockchain{chain: chain}
+
+      false ->
+        Logger.debug("Replacing the chain")
+        %Blockchain{chain: received_chain}
+    end
   end
 
   # Private functions

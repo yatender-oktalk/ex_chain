@@ -26,18 +26,13 @@ defmodule ExChain.Blockchain do
     %{blockchain | chain: chain ++ [Block.mine_block(last_block, data)]}
   end
 
-  @spec valid_chain?(ExChain.Blockchain.t()) :: boolean
-  def valid_chain?(%__MODULE__{} = blockchain) do
-    blockchain.chain
-    |> List.delete_at(0)
-    |> Enum.with_index(1)
-    |> Enum.map(fn {current_block, index} ->
-      last_block = Enum.at(blockchain.chain, index - 1)
-
-      valid_last_hash?(last_block, current_block) &&
-        valid_block_hash?(current_block)
+  @spec valid_chain?(Blockchain.t()) :: boolean()
+  def valid_chain?(%__MODULE__{chain: chain}) do
+    chain
+    |> Enum.chunk_every(2, 1, :discard)
+    |> Enum.all?(fn [prev_block, block] ->
+      valid_last_hash?(prev_block, block) && valid_block_hash?(prev_block)
     end)
-    |> Enum.all?(&(&1 == true))
   end
 
   @spec replace_chain_if_longer(ExChain.Blockchain.t(), ExChain.Blockchain.t()) ::

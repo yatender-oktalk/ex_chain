@@ -27,12 +27,11 @@ defmodule ExChain.Blockchain do
   end
 
   @spec valid_chain?(Blockchain.t()) :: boolean()
-  def valid_chain?(%__MODULE__{chain: chain}) do
-    chain
-    |> Enum.chunk_every(2, 1, :discard)
-    |> Enum.all?(fn [prev_block, block] ->
-      valid_last_hash?(prev_block, block) && valid_block_hash?(prev_block)
-    end)
+  def valid_chain?(%__MODULE__{chain: []}), do: false
+
+  def valid_chain?(%__MODULE__{chain: blocks}) do
+    [genesis_block | next_blocks] = blocks
+    genesis_block == Block.genesis() && valid_blocks?(genesis_block, next_blocks)
   end
 
   @spec replace_chain_if_longer(ExChain.Blockchain.t(), ExChain.Blockchain.t()) ::
@@ -53,6 +52,16 @@ defmodule ExChain.Blockchain do
   end
 
   # Private functions
+
+  defp valid_blocks?(_genesis_block, []), do: true
+
+  defp valid_blocks?(last_block, [block | []]) do
+    valid_last_hash?(last_block, block) && valid_block_hash?(block)
+  end
+
+  defp valid_blocks?(last_block, [block | next_blocks]) do
+    valid_last_hash?(last_block, block) && valid_block_hash?(block) && valid_blocks?(block, next_blocks)
+  end
 
   defp valid_last_hash?(
          %Block{hash: hash} = _last_block,
